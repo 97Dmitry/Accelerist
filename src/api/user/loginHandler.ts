@@ -7,11 +7,8 @@ export const login = async (data: { email: string; password: string }) => {
       headers: { "Content-Type": "application/json" },
     }
   );
+  console.log(contents);
   return contents;
 };
 
-import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({ name: "John Doe" });
-}
