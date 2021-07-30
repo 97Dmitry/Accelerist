@@ -33,12 +33,4 @@ yarn-error.log*
 # vercel
 .vercel
 
-
-
-
 .idea
-api
-pages/auth
-styles
-public
-assets
