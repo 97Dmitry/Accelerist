@@ -25,7 +25,10 @@ const Auth: NextComponentType<IAuth> = ({}) => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const fetchData = await login({ email: data.email, password: data.password })
+    const fetchData = await login({
+      email: data.email,
+      password: data.password,
+    });
     console.log(fetchData);
   };
 
