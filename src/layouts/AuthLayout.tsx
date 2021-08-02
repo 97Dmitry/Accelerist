@@ -36,9 +36,10 @@ const Wrapper = styled.main`
   }
 `;
 
-const Header = styled.div`
+const Header = styled.header`
   width: 100%;
   height: 80px;
+  min-height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,8 +52,7 @@ const Text = styled.p`
 
   font-weight: 500;
   font-size: 18px;
-  line-height: 145%;
-  /* or 26px */
+  line-height: 1.5;
 
   letter-spacing: 0.2em;
 `;
