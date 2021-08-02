@@ -4,9 +4,12 @@ import Link from "next/link";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { authorization } from "store/user/userSlice";
+import { selectorLoading } from "store/user/userSelector";
+
 import AuthLayout from "layouts/AuthLayout";
 import LinkedIn from "assets/svg/LinkedIn";
-import { login } from "api/user/loginHandler";
 
 interface IAuth {}
 
@@ -17,6 +20,7 @@ type Inputs = {
 
 const Auth: NextComponentType<IAuth> = ({}) => {
   const [state, setState] = useState<"login" | "registration">("login");
+  const loading = useAppSelector(selectorLoading);
   const {
     register,
     handleSubmit,
@@ -24,12 +28,10 @@ const Auth: NextComponentType<IAuth> = ({}) => {
     formState: { errors },
   } = useForm<Inputs>();
 
+  const dispatch = useAppDispatch();
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const fetchData = await login({
-      email: data.email,
-      password: data.password,
-    });
-    console.log(fetchData);
+    dispatch(authorization({ email: data.email, password: data.password }));
   };
 
   return (
@@ -77,7 +79,9 @@ const Auth: NextComponentType<IAuth> = ({}) => {
                 </UnderForm>
               </>
             )}
-            <Button type="submit">Send</Button>
+            <Button loading={loading ? 1 : 0} disabled={loading} type="submit">
+              Send
+            </Button>
           </form>
         </FormWrapper>
         <Text>
@@ -165,10 +169,14 @@ const Input = styled.input`
   border: 1px solid #e8e8e8;
 `;
 
-const Button = styled.button`
+interface IButton {
+  loading: number;
+}
+const Button = styled.button<IButton>`
   height: 46px;
   width: 100%;
-  background: #2baee0;
+  background: ${(props) => (props.loading ? "#145368" : "#2baee0")};
+  color: ${(props) => (props.loading ? "#fff" : "#000")};
   border-radius: 6px;
 `;
 

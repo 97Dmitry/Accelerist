@@ -1,6 +1,9 @@
 import type { AppProps } from "next/app";
 import styled from "styled-components";
 
+import store from "store";
+import { Provider } from "react-redux";
+
 import Global from "styles/globalStyle";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -9,8 +12,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return getLayout(
     <Wrapper>
-      <Global />
-      <Component {...pageProps} />
+      <Provider store={store}>
+        <Global />
+        <Component {...pageProps} />
+      </Provider>
     </Wrapper>
   );
 }
