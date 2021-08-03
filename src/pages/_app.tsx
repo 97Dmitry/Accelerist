@@ -4,22 +4,26 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import Global from "styles/globalStyle";
 import wrapper from "store";
-
-import { store } from "store/store";
+import { useStore } from "react-redux";
 
 function App({ Component, pageProps }: AppProps) {
-  // @ts-ignore
+  const store = useStore();
 
+  // @ts-ignore
   const getLayout = Component.getLayout || ((page) => page);
   return (
     //@ts-ignore
     <PersistGate loading={null} persistor={store.__persistor}>
-      {getLayout(
-        <Wrapper>
-          <Global />
-          <Component {...pageProps} />
-        </Wrapper>
-      )}
+      <Wrapper>
+        {getLayout(
+          <>
+            <Global />
+            <Content>
+              <Component {...pageProps} />
+            </Content>
+          </>
+        )}
+      </Wrapper>
     </PersistGate>
   );
 }
@@ -30,4 +34,11 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100vh;
+  max-height: 100vh;
+`;
+
+const Content = styled.main`
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
 `;

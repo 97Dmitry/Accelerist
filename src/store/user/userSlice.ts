@@ -3,7 +3,7 @@ import { HYDRATE } from "next-redux-wrapper";
 import { singIn } from "../../axios/userApi";
 
 export const loginThunk = createAsyncThunk(
-  "userState/loginStatus",
+  "userState/login",
   async (data: IAuth, thunkAPI) => {
     const response = await singIn(data);
     return response.data;
@@ -48,6 +48,14 @@ const userSlice = createSlice({
         authorized: true,
         firstName: data.firstName,
         lastName: data.lastName,
+        loading: false,
+      };
+    },
+    //@ts-ignore
+    [loginThunk.pending]: (state) => {
+      return {
+        ...state,
+        loading: true,
       };
     },
   },

@@ -1,13 +1,14 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
+import Head from "next/head";
 
 import axios from "axios";
 import useSWR from "swr";
 
 import MainLayout from "layouts/MainLayout";
 import { wrapper } from "store/store";
-import httpClient from "../../axios/server";
-import { loginThunk } from "../../store/user/userSlice";
+import httpClient from "axios/server";
+// import { loginThunk } from "store/user/userSlice";
 
 type ServerData = {
   items: Array<{
@@ -25,7 +26,7 @@ interface IDashboard {
 const fetcher = (url: string) => httpClient.get(url).then((res) => res.data);
 
 const Dashboard: FC<IDashboard> = ({ serverData }) => {
-  const [companiesLimit, setCompaniesLimit] = useState(10);
+  const [companiesLimit, setCompaniesLimit] = useState(50);
   const [companiesPage, setCompaniesPage] = useState(1);
 
   const { data } = useSWR<ServerData>(
@@ -42,6 +43,9 @@ const Dashboard: FC<IDashboard> = ({ serverData }) => {
 
   return (
     <>
+      <Head>
+        <title>DashBoard</title>
+      </Head>
       <Wrapper>
         {data.items.map((el) => (
           <div key={el.id}>
@@ -73,6 +77,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
       );
 
       const serverData = await data.data;
+      console.log(req.cookies.accessToken);
+
       return {
         props: {
           serverData,
@@ -80,5 +86,26 @@ export const getServerSideProps = wrapper.getServerSideProps(
       };
     }
 );
+
+// export const getServerSideProps = async ({ req }) => {
+//   const data = await axios.get(
+//     `https://accelerist.herokuapp.com/api/v1/companies?page=1&limit=10
+//   `,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${req.cookies.accessToken}`,
+//       },
+//     }
+//   );
+
+//   const serverData = await data.data;
+//   console.log(req.cookies.accessToken);
+
+//   return {
+//     props: {
+//       serverData,
+//     },
+//   };
+// };
 
 const Wrapper = styled.div``;

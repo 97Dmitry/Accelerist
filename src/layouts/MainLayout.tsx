@@ -25,7 +25,7 @@ const MainLayout: NextComponentType<IMainLayout> = ({ children }) => {
           <DarkLogo />
           <HeaderTitle>ACCELERIST</HeaderTitle>
         </HeaderWrapper>
-        {user.firstName ? user.firstName + user.lastName : "No name"}
+        {/* {user.firstName ? user.firstName + user.lastName : "No name"} */}
       </Header>
       <Wrapper>{children}</Wrapper>
     </>
@@ -34,12 +34,12 @@ const MainLayout: NextComponentType<IMainLayout> = ({ children }) => {
 
 export default MainLayout;
 
-const Wrapper = styled.main`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1200px;
+  width: 80%;
   margin: 0 auto;
-  height: 100vh;
+  overflow-y: auto;
 `;
 
 const Header = styled.header`
@@ -47,18 +47,23 @@ const Header = styled.header`
   height: 60px;
   min-height: 60px;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   background: #d4f3ff;
 
   & > :first-child {
     width: 1000px;
   }
+
+  &::after {
+    content: "No name";
+  }
 `;
 
 const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 10%;
 `;
 
 const HeaderTitle = styled.p`
