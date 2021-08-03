@@ -1,8 +1,17 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IAuth, IRegistration, IUser } from "./IUser";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+import { singIn } from "../../axios/userApi";
+
+export const loginThunk = createAsyncThunk(
+  "userState/login",
+  async (data: IAuth, thunkAPI) => {
+    const response = await singIn(data);
+    return response.data;
+  }
+);
 
 const initialState: IUser = {
-  email: "",
+  email: null,
   accessToken: null,
   id: null,
   firstName: null,
@@ -13,37 +22,88 @@ const initialState: IUser = {
   authorized: false,
 };
 
-export const userSlice = createSlice({
-  name: "auth",
+const userSlice = createSlice({
+  name: "userState",
   initialState,
-  reducers: {
-    authorization: (state, action: PayloadAction<IAuth>) => {},
-    registration: (state, action: PayloadAction<IRegistration>) => {},
-    setUser: (state, action: PayloadAction<IUser>) => {
-      return { ...state, ...action.payload };
+
+  reducers: {},
+
+  extraReducers: {
+    [HYDRATE]: (state, action) => {
+      return {
+        ...state,
+        ...action.payload.subject,
+      };
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      return { ...state, loading: action.payload };
+    //@ts-ignore
+    [loginThunk.fulfilled]: (state, action: PayloadAction<ILoginResponse>) => {
+      const data = action.payload.user;
+      document.cookie = `accessToken=${action.payload.accessToken}`;
+      return {
+        ...state,
+        email: data.email,
+        accessToken: action.payload.accessToken,
+        id: data.id,
+        role: data.role,
+        authorized: true,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        loading: false,
+      };
     },
-    setErrors: (state, action: PayloadAction<string | null>) => {
-      return { ...state, errors: action.payload };
-    },
-    setAuthorized: (state, action: PayloadAction<boolean>) => {
-      return { ...state, authorized: action.payload };
-    },
-    removeUser: () => {
-      return { ...initialState };
+    //@ts-ignore
+    [loginThunk.pending]: (state) => {
+      return {
+        ...state,
+        loading: true,
+      };
     },
   },
 });
 
+export const {} = userSlice.actions;
 export default userSlice.reducer;
-export const {
-  authorization,
-  setUser,
-  registration,
-  removeUser,
-  setLoading,
-  setErrors,
-  setAuthorized,
-} = userSlice.actions;
+
+export interface IUser {
+  email: string | null;
+  accessToken: string | null;
+  id: number | null;
+  loading: boolean;
+  errors?: string | null;
+  role: string | null;
+  authorized?: boolean;
+  firstName: string | null;
+  lastName: string | null;
+}
+
+export interface IAuth {
+  email: string;
+  password: string;
+}
+
+export interface ILoginResponse {
+  accessToken: string;
+  user: {
+    avatarKey: string | null;
+    createdAt: string;
+    deletedAt: string | null;
+    email: "user@example.com";
+    firstName: null;
+    id: "eb893b0e-ce28-4392-a824-4a3ff9c36e79";
+    imported: false;
+    isAuthorized: true;
+    isReceivingNotifications: true;
+    lastName: null;
+    linkedinLink: null;
+    loggedInAt: "2021-08-03T10:42:33.578Z";
+    role: "owner";
+    teamId: "7de2786c-4559-462e-a636-3bec1667fe85";
+    updatedAt: "2021-08-03T10:42:33.657Z";
+  };
+}
+
+export interface IRegistration {
+  email: string;
+  password: string;
+  password_confirmation: string;
+}

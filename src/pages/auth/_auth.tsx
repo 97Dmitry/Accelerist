@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { NextComponentType } from "next";
+import React, { useState, FC } from "react";
 import Link from "next/link";
+import useRouter from "next/router";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { authorization } from "store/user/userSlice";
+import { loginThunk } from "../../store/user/userSlice";
 import { selectorLoading } from "store/user/userSelector";
 
 import AuthLayout from "layouts/AuthLayout";
@@ -18,9 +18,10 @@ type Inputs = {
   password: string;
 };
 
-const Auth: NextComponentType<IAuth> = ({}) => {
+const Auth: FC<IAuth> = ({}) => {
   const [state, setState] = useState<"login" | "registration">("login");
   const loading = useAppSelector(selectorLoading);
+  const router = useRouter;
   const {
     register,
     handleSubmit,
@@ -31,7 +32,9 @@ const Auth: NextComponentType<IAuth> = ({}) => {
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    dispatch(authorization({ email: data.email, password: data.password }));
+    //@ts-ignore
+    await dispatch(loginThunk({ password: data.password, email: data.email }));
+    router.push("/dashboard");
   };
 
   return (
@@ -100,10 +103,13 @@ Auth.getLayout = function getLayout(page) {
 };
 
 const Wrapper = styled.div`
-  height: 100%;
   display: flex;
   justify-content: center;
   padding-top: 80px;
+
+  @media (max-width: 1366px) {
+    padding-top: 20px;
+  }
 `;
 
 const Card = styled.div`
@@ -114,6 +120,10 @@ const Card = styled.div`
   border-radius: 8px;
 
   background: #fff;
+
+  @media (max-width: 1366px) {
+    padding: 20px;
+  }
 `;
 
 const FormWrapper = styled.div`

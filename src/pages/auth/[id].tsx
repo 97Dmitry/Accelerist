@@ -1,31 +1,39 @@
-import { NextComponentType } from "next";
-import styled from "styled-components";
+import { FC } from "react";
 
+import styled from "styled-components";
 import useSWR from "swr";
+import { wrapper } from "store/store";
+import httpClient from "axios/server";
+import axios from "axios";
+
+type ServerData = {
+  items: Array<{
+    id: string;
+    zoomInfoId: null | string;
+    name: string;
+    logo: null | string;
+  }>;
+};
 
 interface Ilable {
-  postsposts: any;
+  serverData: ServerData;
 }
 
-const fetcher = (url: any) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => httpClient.get(url).then((res) => res.data);
 
-const Lable: NextComponentType<Ilable> = ({ postsposts }) => {
-  const { data, error } = useSWR(
-    "https://jsonplaceholder.typicode.com/posts/",
-    fetcher,
-    { initialData: postsposts }
-  );
+const Lable: FC<Ilable> = ({ serverData }) => {
+  const { data } = useSWR<ServerData>(`companies/?page=1&limit=100`, fetcher, {
+    initialData: serverData,
+  });
 
   return (
     <>
       <Wrapper>
         {data ? (
           <div>
-            {data.map((e) => (
-              <div key={e.id}>
-                <p>{e.title}</p>
-                <p>{e.body}</p>
-                <hr />
+            {data.items.map((el: any) => (
+              <div key={el.id}>
+                <p>{el.name}</p>
               </div>
             ))}
           </div>
@@ -41,13 +49,38 @@ export default Lable;
 
 const Wrapper = styled.div``;
 
-export const getServerSideProps = async () => {
-  const data = await fetch(`https://jsonplaceholder.typicode.com/posts/`);
-  const postsposts = await data.json();
+// export const getServerSideProps = wrapper.getServerSideProps(
+//   (store) =>
+//     async ({ params }) => {
+//       const data = await fetch(`https://jsonplaceholder.typicode.com/posts/`);
+//       const serverData = await data.json();
+//       return {
+//         props: {
+//           serverData,
+//         },
+//       };
+//     }
+// );
 
-  return {
-    props: {
-      postsposts,
-    },
-  };
-};
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ params }) => {
+      const data = await axios.get(
+        `https://accelerist.herokuapp.com/api/v1/companies?page=1&limit=100
+  `,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlYjg5M2IwZS1jZTI4LTQzOTItYTgyNC00YTNmZjljMzZlNzkiLCJhdWQiOiJhdXRoIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNjI3ODkxMDkyLCJleHAiOjE2MzA0ODMwOTJ9.p8lzvtDdpv_EgBFGs2pizbiZXxWpgYfAvtF8JqfrviA",
+          },
+        }
+      );
+      const serverData = await data.data;
+
+      return {
+        props: {
+          serverData,
+        },
+      };
+    }
+);

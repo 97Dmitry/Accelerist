@@ -1,26 +1,30 @@
-import { RootState } from "../index";
+import { AppState } from "../store";
 import { createSelector } from "@reduxjs/toolkit";
 
-const selectSelf = (state: RootState) => state;
+const selectSelf = (state: AppState) => state;
 
-export const selectorUser = createSelector(selectSelf, (state: RootState) => {
+export const selectorUser = createSelector(selectSelf, (state: AppState) => {
   return state.userState;
+});
+
+export const selectorToken = createSelector(selectSelf, (state: AppState) => {
+  return state.userState.accessToken;
 });
 
 export const selectorLoading = createSelector(
   selectSelf,
-  (state: RootState): boolean => {
+  (state: AppState): boolean => {
     return state.userState.loading;
   }
 );
 
-export const selectorErrors = createSelector(selectSelf, (state: RootState) => {
+export const selectorErrors = createSelector(selectSelf, (state: AppState) => {
   return state.userState.errors;
 });
 
 export const selectorAuthorized = createSelector(
   selectSelf,
-  (state: RootState) => {
+  (state: AppState) => {
     return state.userState.authorized;
   }
 );
