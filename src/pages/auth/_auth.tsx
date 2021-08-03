@@ -4,12 +4,12 @@ import Link from "next/link";
 import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAppDispatch, useAppSelector } from "store/hooks";
-import { authorization } from "store/user/userSlice";
-import { selectorLoading } from "store/user/userSelector";
+// import { useAppDispatch, useAppSelector } from "store/hooks";
 
 import AuthLayout from "layouts/AuthLayout";
 import LinkedIn from "assets/svg/LinkedIn";
+import { useAppDispatch } from "../../store/hooks";
+import { loginThunk } from "../../store/user/userSlice";
 
 interface IAuth {}
 
@@ -20,7 +20,7 @@ type Inputs = {
 
 const Auth: NextComponentType<IAuth> = ({}) => {
   const [state, setState] = useState<"login" | "registration">("login");
-  const loading = useAppSelector(selectorLoading);
+  const loading = false;
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ const Auth: NextComponentType<IAuth> = ({}) => {
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    dispatch(authorization({ email: data.email, password: data.password }));
+    dispatch(loginThunk({ password: data.password, email: data.email }));
   };
 
   return (
@@ -89,6 +89,7 @@ const Auth: NextComponentType<IAuth> = ({}) => {
         </Text>
         <LinkedIn height={24} width={24} />
       </Card>
+      <Link href={"/dashboard"}>Forget Password?</Link>
     </Wrapper>
   );
 };

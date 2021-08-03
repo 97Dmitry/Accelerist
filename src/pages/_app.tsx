@@ -1,25 +1,29 @@
 import type { AppProps } from "next/app";
 import styled from "styled-components";
-
-import store from "store";
-import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import Global from "styles/globalStyle";
+import wrapper from "store";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  //@ts-ignore
+import { store } from "store/store";
+
+function App({ Component, pageProps }: AppProps) {
+  // @ts-ignore
+
   const getLayout = Component.getLayout || ((page) => page);
-
-  return getLayout(
-    <Wrapper>
-      <Provider store={store}>
-        <Global />
-        <Component {...pageProps} />
-      </Provider>
-    </Wrapper>
+  return (
+    //@ts-ignore
+    <PersistGate loading={null} persistor={store.__persistor}>
+      {getLayout(
+        <Wrapper>
+          <Global />
+          <Component {...pageProps} />
+        </Wrapper>
+      )}
+    </PersistGate>
   );
 }
-export default MyApp;
+export default wrapper.withRedux(App);
 
 const Wrapper = styled.div`
   display: flex;
