@@ -5,7 +5,7 @@ import {
   ThunkAction,
 } from "@reduxjs/toolkit";
 import { Action } from "redux";
-import { createWrapper, HYDRATE } from "next-redux-wrapper";
+import { createWrapper } from "next-redux-wrapper";
 import userSlice from "./user/userSlice";
 import {
   REHYDRATE,
@@ -78,12 +78,14 @@ const makeStore = ({ isServer }) => {
     });
 
     //@ts-ignore
-    store.__persistor = persistStore(store); // This creates a persistor object & push that persisted object to .__persistor, so that we can avail the persistability feature
+    store.__persistor = persistStore(store);
     return store;
   }
 };
 
-const store = makeStore({ isServer: false });
+const store = configureStore({
+  reducer: rootReducer,
+})
 
 export type AppDispatch = typeof store.dispatch;
 export type AppStore = ReturnType<typeof makeStore>;
