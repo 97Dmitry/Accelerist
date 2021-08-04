@@ -10,19 +10,19 @@ function App({ Component, pageProps }: AppProps) {
   const store = useStore();
 
   // @ts-ignore
-  // const getLayout = Component.getLayout || ((page) => page);
+  const getLayout = Component.getLayout || ((page) => page);
   return (
     //@ts-ignore
     <PersistGate loading={null} persistor={store.__persistor}>
       <Wrapper>
-        {/*{getLayout(*/}
-        {/*  <>*/}
-        <Global />
-        <Content>
-          <Component {...pageProps} />
-        </Content>
-        {/*</>*/}
-        {/*)}*/}
+        {getLayout(
+          <>
+            <Global />
+            <Content>
+              <Component {...pageProps} />
+            </Content>
+          </>
+        )}
       </Wrapper>
     </PersistGate>
   );

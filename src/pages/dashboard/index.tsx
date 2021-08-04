@@ -40,7 +40,7 @@ const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
   }
 
   return (
-    <MainLayout headTitle={"DashBoard"} title={"Dashboard"}>
+    <>
       <ColumnArticle>
         <ColumnArticleTitle>Prospecting Sessions</ColumnArticleTitle>
         <ColumnArticleMore>see more</ColumnArticleMore>
@@ -133,11 +133,19 @@ const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
         </Favorites>
         <Reports>Adqdwq</Reports>
       </DownSideContent>
-    </MainLayout>
+    </>
   );
 };
 
 export default Dashboard;
+//@ts-ignore
+Dashboard.getLayout = function getLayout(page) {
+  return (
+    <MainLayout headTitle={"DashBoard"} title={"Dashboard"}>
+      {page}
+    </MainLayout>
+  );
+};
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
