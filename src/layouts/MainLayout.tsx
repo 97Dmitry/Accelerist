@@ -1,4 +1,5 @@
-import { NextComponentType } from "next";
+import React, { FC } from "react";
+import Head from "next/head";
 import styled from "styled-components";
 
 import DarkLogo from "assets/svg/DarkLogo";
@@ -6,9 +7,12 @@ import { useAppSelector } from "store/hooks";
 import { selectorUser } from "store/user/userSelector";
 import httpClient from "axios/server";
 
-interface IMainLayout {}
+interface IMainLayout {
+  title: React.ReactNode;
+  headTitle: string;
+}
 
-const MainLayout: NextComponentType<IMainLayout> = ({ children }) => {
+const MainLayout: FC<IMainLayout> = ({ children, title, headTitle }) => {
   const user = useAppSelector(selectorUser);
 
   httpClient.interceptors.request.use(function (config) {
@@ -20,14 +24,22 @@ const MainLayout: NextComponentType<IMainLayout> = ({ children }) => {
 
   return (
     <>
+      <Head>
+        <title>{headTitle}</title>
+      </Head>
       <Header>
         <HeaderWrapper>
           <DarkLogo />
           <HeaderTitle>ACCELERIST</HeaderTitle>
         </HeaderWrapper>
-        {/* {user.firstName ? user.firstName + user.lastName : "No name"} */}
+        {user.firstName ? user.firstName + user.lastName : "No name"}
       </Header>
-      <Wrapper>{children}</Wrapper>
+      <Wrapper>
+        <Title>{title}</Title>
+        <Content>
+          <Main>{children}</Main>
+        </Content>
+      </Wrapper>
     </>
   );
 };
@@ -37,35 +49,53 @@ export default MainLayout;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 80%;
+  min-width: 1400px;
+
+  & > * {
+    font-family: "Rubik", sans-serif;
+  }
+`;
+
+const Title = styled.div`
+  width: 70%;
   margin: 0 auto;
-  overflow-y: auto;
+
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 100px;
+
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 150%;
+`;
+
+const Content = styled.div`
+  background: rgba(239, 236, 236, 0.23);
+`;
+const Main = styled.div`
+  width: 83%;
+  padding: 0 0 0 15%;
 `;
 
 const Header = styled.header`
   width: 100%;
-  height: 60px;
-  min-height: 60px;
+  height: 80px;
+  min-height: 80px;
+  padding: 0 0 0 15%;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
+  justify-content: start;
   background: #d4f3ff;
-
-  & > :first-child {
-    width: 1000px;
-  }
-
-  &::after {
-    content: "No name";
-  }
 `;
 
 const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 10%;
+  width: 80%;
+  min-width: 80%;
 `;
 
 const HeaderTitle = styled.p`
-  margin-left: 10px;
+  padding-left: 10px;
 `;

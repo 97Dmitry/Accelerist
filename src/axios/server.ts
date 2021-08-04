@@ -5,3 +5,5 @@ const httpClient = axios.create({
 });
 
 export default httpClient;
+
+export const fetcher = (url: string) => httpClient.get(url).then((res) => res.data);

@@ -32,75 +32,76 @@ const Auth: FC<IAuth> = ({}) => {
   const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    //@ts-ignore
     await dispatch(loginThunk({ password: data.password, email: data.email }));
     router.push("/dashboard");
   };
 
   return (
-    <Wrapper>
-      <Card>
-        <FormTitle>Welcome to Accelerist</FormTitle>
-        <ChangeStateButtonWrapper>
-          <LoginButton toggle={state} onClick={() => setState("login")}>
-            Login
-          </LoginButton>
-          <RegistrationButton
-            toggle={state}
-            onClick={() => setState("registration")}
-          >
-            Registration
-          </RegistrationButton>
-        </ChangeStateButtonWrapper>
-        <FormWrapper>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Label>Email</Label>
-            <Input {...register("email")} placeholder={"Email"} />
-            <Label>Password</Label>
-            <Input
-              {...register("password", {
-                required: true,
-                maxLength: 10,
-              })}
-              placeholder={"Password"}
-            />
-            {errors.password && errors.email && <p>This field is required</p>}
-            {state === "registration" ? (
-              <TextCenter>
-                <RegistrationPolicy>
-                  I agree that by clicking <strong>“Registration”</strong> I
-                  accept the Terms Of Service and Privacy Policy
-                </RegistrationPolicy>
-              </TextCenter>
-            ) : (
-              <>
-                <UnderForm>
-                  <UnderFormUnit>
-                    <Checkbox type="checkbox" /> <span>Remember</span>
-                  </UnderFormUnit>
-                  <Link href={"/"}>Forget Password?</Link>
-                </UnderForm>
-              </>
-            )}
-            <Button loading={loading ? 1 : 0} disabled={loading} type="submit">
-              Send
-            </Button>
-          </form>
-        </FormWrapper>
-        <Text>
-          <p>or continue with</p>
-        </Text>
-        <LinkedIn height={24} width={24} />
-      </Card>
-    </Wrapper>
+    <AuthLayout>
+      <Wrapper>
+        <Card>
+          <FormTitle>Welcome to Accelerist</FormTitle>
+          <ChangeStateButtonWrapper>
+            <LoginButton toggle={state} onClick={() => setState("login")}>
+              Login
+            </LoginButton>
+            <RegistrationButton
+              toggle={state}
+              onClick={() => setState("registration")}
+            >
+              Registration
+            </RegistrationButton>
+          </ChangeStateButtonWrapper>
+          <FormWrapper>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Label>Email</Label>
+              <Input {...register("email")} placeholder={"Email"} />
+              <Label>Password</Label>
+              <Input
+                {...register("password", {
+                  required: true,
+                  maxLength: 10,
+                })}
+                placeholder={"Password"}
+              />
+              {errors.password && errors.email && <p>This field is required</p>}
+              {state === "registration" ? (
+                <TextCenter>
+                  <RegistrationPolicy>
+                    I agree that by clicking <strong>“Registration”</strong> I
+                    accept the Terms Of Service and Privacy Policy
+                  </RegistrationPolicy>
+                </TextCenter>
+              ) : (
+                <>
+                  <UnderForm>
+                    <UnderFormUnit>
+                      <Checkbox type="checkbox" /> <span>Remember</span>
+                    </UnderFormUnit>
+                    <Link href={"/"}>Forget Password?</Link>
+                  </UnderForm>
+                </>
+              )}
+              <Button
+                loading={loading ? 1 : 0}
+                disabled={loading}
+                type="submit"
+              >
+                Send
+              </Button>
+            </form>
+          </FormWrapper>
+          <Text>
+            <p>or continue with</p>
+          </Text>
+          <LinkedIn height={24} width={24} />
+        </Card>
+      </Wrapper>
+    </AuthLayout>
   );
 };
 
 export default Auth;
-//@ts-ignore
-Auth.getLayout = function getLayout(page) {
-  return <AuthLayout>{page}</AuthLayout>;
-};
 
 const Wrapper = styled.div`
   display: flex;
