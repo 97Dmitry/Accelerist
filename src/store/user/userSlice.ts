@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import { singIn } from "../../axios/userApi";
+import { singIn } from "axios/userApi";
+import lStorage from "utils/lStorage";
 
 export const loginThunk = createAsyncThunk(
   "userState/login",
@@ -11,34 +12,33 @@ export const loginThunk = createAsyncThunk(
 );
 
 const initialState: IUser = {
-  email: null,
-  accessToken: null,
-  id: null,
-  firstName: null,
-  lastName: null,
-  role: null,
+  email: lStorage("email"),
+  accessToken: lStorage("accessToken"),
+  id: lStorage("id"),
+  firstName: lStorage("firstName"),
+  lastName: lStorage("lastName"),
+  role: lStorage("role"),
   loading: false,
   errors: null,
-  authorized: false,
+  authorized: lStorage("authorized"),
 };
 
 const userSlice = createSlice({
   name: "userState",
   initialState,
-
   reducers: {},
 
   extraReducers: {
-    [HYDRATE]: (state, action) => {
-      return {
-        ...state,
-        ...action.payload.subject,
-      };
-    },
     //@ts-ignore
     [loginThunk.fulfilled]: (state, action: PayloadAction<ILoginResponse>) => {
       const data = action.payload.user;
       document.cookie = `accessToken=${action.payload.accessToken}`;
+      lStorage("accessToken", action.payload.accessToken);
+      lStorage("email", data.email);
+      lStorage("role", data.role);
+      lStorage("authorized", true);
+      lStorage("firstName", data.firstName);
+      lStorage("lastName", data.lastName);
       return {
         ...state,
         email: data.email,
@@ -57,6 +57,12 @@ const userSlice = createSlice({
         ...state,
         loading: true,
       };
+    },
+    [HYDRATE]: (state, action) => {
+      // console.log(state, action);
+      // return {
+      //   ...state,
+      // };
     },
   },
 });
