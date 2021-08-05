@@ -382,11 +382,12 @@ const FavoritesList = styled.div`
 `;
 
 const FavoriteCard = styled.div`
-  width: 49%;
+  width: 48%;
   min-height: 156px;
   background: rgb(255, 255, 255);
   border-radius: 6px;
   padding: 24px;
+  margin-bottom: 18px;
 `;
 
 interface FavoriteImgName {
