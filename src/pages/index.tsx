@@ -7,20 +7,15 @@ interface IHome {}
 
 const Home: NextComponentType<IHome> = ({}) => {
   return (
-    <div>
-      <Head>
-        <title>NextJS</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
       <Wrapper>
         <h1>NextJS</h1>
       </Wrapper>
-    </div>
+    </>
   );
 };
 
 export default Home;
-
 //@ts-ignore
 Home.getLayout = function getLayout(page) {
   return (
@@ -29,4 +24,5 @@ Home.getLayout = function getLayout(page) {
     </MainLayout>
   );
 };
+
 const Wrapper = styled.div``;

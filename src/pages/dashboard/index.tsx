@@ -6,19 +6,51 @@ import { fetcher } from "axios/server";
 import useSWR from "swr";
 
 import MainLayout from "layouts/MainLayout";
-import { wrapper } from "store/store";
+import { wrapper } from "store";
 import dateParser from "utils/dateParser";
-import { FavoritesResponseData } from "../../interfaces/FavoritesResponseData";
-import EmptyHouse from "../../assets/svg/EmptyHouse";
+import { FavoritesResponseData } from "interfaces/FavoritesResponseData";
+import EmptyHouse from "assets/svg/EmptyHouse";
 
-type ServerData = {
-  items: Array<{
-    id: string;
-    zoomInfoId: null | string;
-    name: string;
-    logo: null | string;
-  }>;
-};
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ req }) => {
+      const token = req.cookies.accessToken;
+
+      if (!token) {
+        return {
+          redirect: {
+            destination: "/auth",
+            permanent: false,
+          },
+        };
+      }
+      const userData = await axios.get(
+        `https://accelerist.herokuapp.com/api/v1/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const favoritesData = await axios.get(
+        `https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const user = await userData.data;
+      const favorites = await favoritesData.data;
+      return {
+        props: {
+          user,
+          favorites,
+        },
+      };
+    }
+);
 
 interface IDashboard {
   user: any;
@@ -147,38 +179,6 @@ Dashboard.getLayout = function getLayout(page) {
   );
 };
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) =>
-    async ({ req }) => {
-      const token = req.cookies.accessToken;
-      const userData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const favoritesData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const user = await userData.data;
-      const favorites = await favoritesData.data;
-      return {
-        props: {
-          user,
-          favorites,
-        },
-      };
-    }
-);
-
 const ColumnArticle = styled.div`
   padding: 30px 0 20px;
   display: flex;
@@ -194,7 +194,6 @@ const ColumnArticleTitle = styled.div`
 const ColumnArticleMore = styled.a`
   color: blue;
   font-weight: 500;
-
   cursor: pointer;
 `;
 
@@ -207,7 +206,6 @@ const Card = styled.div`
 
 const CardTitle = styled.div`
   border-bottom: 1px solid #e8e8e8;
-
   & > p {
     font-weight: 500;
     font-size: 16px;
@@ -218,7 +216,6 @@ const CardTitle = styled.div`
 const Cards = styled.div`
   display: flex;
   justify-content: space-between;
-
   margin-bottom: 30px;
 `;
 
@@ -246,9 +243,7 @@ const ProspectNumber = styled.div`
   background: #f9f9f9;
   border-radius: 4px;
   height: 70px;
-
   padding: 8px 0;
-
   & > p {
     font-size: 12px;
     color: darkgray;
@@ -259,7 +254,6 @@ const ProspectNumber = styled.div`
     font-size: 24px;
     color: black;
     text-align: center;
-
     margin-top: 8px;
   }
 `;
@@ -293,7 +287,6 @@ const CardUserName = styled.div`
   height: 40px;
   margin-left: 12px;
   overflow: hidden;
-
   & p {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -314,7 +307,6 @@ const CardLastActivity = styled.div`
   flex-direction: column;
   justify-content: center;
   font-size: 12px;
-
   & p {
     &:first-child {
       color: darkgray;
@@ -341,7 +333,6 @@ const FavoritesList = styled.div`
 
 const FavoriteCard = styled.div`
   width: 49%;
-
   min-height: 156px;
   background: rgb(255, 255, 255);
   border-radius: 6px;
@@ -354,13 +345,11 @@ interface FavoriteImgName {
 const FavoriteImgName = styled.div<FavoriteImgName>`
   display: flex;
   align-items: center;
-
   & div {
     &:first-child {
       display: flex;
       justify-content: center;
       align-items: center;
-
       border: 1px solid #e8e8e8;
       box-sizing: border-box;
       height: 48px;

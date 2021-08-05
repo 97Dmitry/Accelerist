@@ -1,4 +1,4 @@
-import { AppState } from "../store";
+import { AppState } from "../index";
 import { createSelector } from "@reduxjs/toolkit";
 
 const selectSelf = (state: AppState) => state;

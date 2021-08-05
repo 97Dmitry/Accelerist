@@ -27,14 +27,14 @@ const MainLayout: FC<IMainLayout> = ({ children, title, headTitle }) => {
       <Head>
         <title>{headTitle}</title>
       </Head>
-      <Header>
-        <HeaderWrapper>
-          <DarkLogo />
-          <HeaderTitle>ACCELERIST</HeaderTitle>
-        </HeaderWrapper>
-        {user.firstName ? user.firstName + user.lastName : "No name"}
-      </Header>
       <Wrapper>
+        <Header>
+          <HeaderWrapper>
+            <DarkLogo />
+            <HeaderTitle>ACCELERIST</HeaderTitle>
+          </HeaderWrapper>
+          {user.firstName ? user.firstName + user.lastName : "No name"}
+        </Header>
         <Title>{title}</Title>
         <Content>
           <Main>{children}</Main>
@@ -49,8 +49,7 @@ export default MainLayout;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 1400px;
-
+  min-width: 1366px;
   & > * {
     font-family: "Rubik", sans-serif;
   }
@@ -59,12 +58,10 @@ const Wrapper = styled.div`
 const Title = styled.div`
   width: 70%;
   margin: 0 auto;
-
   display: flex;
   justify-content: start;
   align-items: center;
   height: 100px;
-
   font-weight: 500;
   font-size: 32px;
   line-height: 150%;
