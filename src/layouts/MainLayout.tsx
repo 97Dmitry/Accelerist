@@ -48,6 +48,7 @@ export default MainLayout;
 
 const Wrapper = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
   min-width: 1366px;
   & > * {
@@ -67,8 +68,9 @@ const Title = styled.div`
   line-height: 150%;
 `;
 
-const Content = styled.div`
-  background: rgba(239, 236, 236, 0.23);
+const Content = styled.main`
+  background: rgba(239, 236, 236, 0.36);
+  flex: 1 1 auto;
 `;
 const Main = styled.div`
   width: 83%;

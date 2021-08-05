@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
+import Image from "next/image";
 
 import axios from "axios";
 import { fetcher } from "axios/server";
@@ -24,6 +25,16 @@ export const getServerSideProps = wrapper.getServerSideProps(
           },
         };
       }
+
+      const lastLoginData = await axios.get(
+        "https://accelerist.herokuapp.com/api/v1/team/last_logins",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       const userData = await axios.get(
         `https://accelerist.herokuapp.com/api/v1/user`,
         {
@@ -43,10 +54,12 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
       const user = await userData.data;
       const favorites = await favoritesData.data;
+      const lastLogin = await lastLoginData.data;
       return {
         props: {
           user,
           favorites,
+          lastLogin,
         },
       };
     }
@@ -55,9 +68,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 interface IDashboard {
   user: any;
   favorites: FavoritesResponseData;
+  lastLogin: any;
 }
 
-const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
+const Dashboard: FC<IDashboard> = ({ user, favorites, lastLogin }) => {
   const [companiesLimit, setCompaniesLimit] = useState(10);
   const [companiesPage, setCompaniesPage] = useState(1);
 
@@ -163,7 +177,43 @@ const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
             })}
           </FavoritesList>
         </Favorites>
-        <Reports>Adqdwq</Reports>
+        <ReportsWrapper>
+          <span>Reports</span>
+          <Reports>
+            <ReportsData>
+              <div>
+                <span>Total</span>
+                <p>43</p>
+              </div>
+              <div>
+                <span>Company</span>
+                <p>43</p>
+              </div>
+            </ReportsData>
+            <TopMatched>
+              <p>Top Matched</p>
+              No Matched
+            </TopMatched>
+            <LastLogin>
+              <p>Last Login</p>
+              {lastLogin.map((el: any) => {
+                return (
+                  <div key={el.id}>
+                    <UserIcon>NN</UserIcon>
+                    <LastLoginUser>
+                      <p>
+                        {(el.user.firstName + el.user.lastName).length
+                          ? el.user.firstName + " " + el.user.lastName
+                          : "No name"}
+                      </p>
+                      <p>{dateParser(el.user.loggedInAt)}</p>
+                    </LastLoginUser>
+                  </div>
+                );
+              })}
+            </LastLogin>
+          </Reports>
+        </ReportsWrapper>
       </DownSideContent>
     </>
   );
@@ -370,6 +420,77 @@ const FavoriteCardCSRFocus = styled.div`
     }
   }
 `;
-const Reports = styled.div`
+const ReportsWrapper = styled.div`
   width: 49%;
+`;
+
+const Reports = styled.div`
+  background: #fff;
+  border-radius: 6px;
+  padding: 24px;
+`;
+
+const ReportsData = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  & > div {
+    width: 48%;
+    background-color: rgba(239, 236, 236, 0.36);
+    border-radius: 6px;
+    text-align: center;
+
+    padding: 8px 0;
+
+    & span {
+      font-size: 12px;
+      color: darkgray;
+    }
+    & p {
+      font-size: 24px;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+  }
+`;
+
+const TopMatched = styled.div`
+  margin-bottom: 16px;
+
+  & p {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  & > div {
+    display: flex;
+  }
+`;
+
+const LastLogin = styled.div`
+  & p {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  & > div {
+    margin-bottom: 10px;
+    display: flex;
+  }
+`;
+
+const LastLoginUser = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  margin-left: 12px;
+  overflow: hidden;
+
+  border-bottom: 1px solid silver;
 `;
