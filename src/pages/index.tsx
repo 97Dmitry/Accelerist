@@ -23,7 +23,10 @@ export default Home;
 
 //@ts-ignore
 Home.getLayout = function getLayout(page) {
-  return <MainLayout>{page}</MainLayout>;
+  return (
+    <MainLayout title={"NextJS"} headTitle={"NextJS"}>
+      {page}
+    </MainLayout>
+  );
 };
-
 const Wrapper = styled.div``;
