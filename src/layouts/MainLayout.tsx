@@ -50,7 +50,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 1366px;
-
   & > * {
     font-family: "Rubik", sans-serif;
   }
@@ -59,12 +58,10 @@ const Wrapper = styled.div`
 const Title = styled.div`
   width: 70%;
   margin: 0 auto;
-
   display: flex;
   justify-content: start;
   align-items: center;
   height: 100px;
-
   font-weight: 500;
   font-size: 32px;
   line-height: 150%;
