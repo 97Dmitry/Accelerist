@@ -6,19 +6,51 @@ import { fetcher } from "axios/server";
 import useSWR from "swr";
 
 import MainLayout from "layouts/MainLayout";
-import { wrapper } from "store/store";
+import { wrapper } from "store";
 import dateParser from "utils/dateParser";
-import { FavoritesResponseData } from "../../interfaces/FavoritesResponseData";
-import EmptyHouse from "../../assets/svg/EmptyHouse";
+import { FavoritesResponseData } from "interfaces/FavoritesResponseData";
+import EmptyHouse from "assets/svg/EmptyHouse";
 
-type ServerData = {
-  items: Array<{
-    id: string;
-    zoomInfoId: null | string;
-    name: string;
-    logo: null | string;
-  }>;
-};
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ req }) => {
+      const token = req.cookies.accessToken;
+
+      if (!token) {
+        return {
+          redirect: {
+            destination: "/auth",
+            permanent: false,
+          },
+        };
+      }
+      const userData = await axios.get(
+        `https://accelerist.herokuapp.com/api/v1/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const favoritesData = await axios.get(
+        `https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const user = await userData.data;
+      const favorites = await favoritesData.data;
+      return {
+        props: {
+          user,
+          favorites,
+        },
+      };
+    }
+);
 
 interface IDashboard {
   user: any;
@@ -40,7 +72,7 @@ const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
   }
 
   return (
-    <MainLayout headTitle={"DashBoard"} title={"Dashboard"}>
+    <>
       <ColumnArticle>
         <ColumnArticleTitle>Prospecting Sessions</ColumnArticleTitle>
         <ColumnArticleMore>see more</ColumnArticleMore>
@@ -133,43 +165,19 @@ const Dashboard: FC<IDashboard> = ({ user, favorites }) => {
         </Favorites>
         <Reports>Adqdwq</Reports>
       </DownSideContent>
-    </MainLayout>
+    </>
   );
 };
 
 export default Dashboard;
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) =>
-    async ({ req }) => {
-      const token = req.cookies.accessToken;
-      const userData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const favoritesData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const user = await userData.data;
-      const favorites = await favoritesData.data;
-      return {
-        props: {
-          user,
-          favorites,
-        },
-      };
-    }
-);
+//@ts-ignore
+Dashboard.getLayout = function getLayout(page) {
+  return (
+    <MainLayout headTitle={"DashBoard"} title={"Dashboard"}>
+      {page}
+    </MainLayout>
+  );
+};
 
 const ColumnArticle = styled.div`
   padding: 30px 0 20px;

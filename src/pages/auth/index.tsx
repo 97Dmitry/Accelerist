@@ -37,7 +37,7 @@ const Auth: FC<IAuth> = ({}) => {
   };
 
   return (
-    <AuthLayout>
+    <>
       <Wrapper>
         <Card>
           <FormTitle>Welcome to Accelerist</FormTitle>
@@ -97,11 +97,15 @@ const Auth: FC<IAuth> = ({}) => {
           <LinkedIn height={24} width={24} />
         </Card>
       </Wrapper>
-    </AuthLayout>
+    </>
   );
 };
 
 export default Auth;
+//@ts-ignore
+Auth.getLayout = function getLayout(page) {
+  return <AuthLayout>{page}</AuthLayout>;
+};
 
 const Wrapper = styled.div`
   display: flex;

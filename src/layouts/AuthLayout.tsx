@@ -1,23 +1,11 @@
 import Logo from "assets/svg/Logo";
-import httpClient from "axios/server";
 import { NextComponentType } from "next";
 import Head from "next/head";
-import { useAppSelector } from "store/hooks";
-import { selectorUser } from "store/user/userSelector";
 import styled from "styled-components";
 
 interface IAuthLayout {}
 
 const AuthLayout: NextComponentType<IAuthLayout> = ({ children }) => {
-  const user = useAppSelector(selectorUser);
-
-  httpClient.interceptors.request.use(function (config) {
-    user.accessToken
-      ? (config.headers.Authorization = `Bearer ${user.accessToken}`)
-      : null;
-    return config;
-  });
-
   return (
     <>
       <Head>
