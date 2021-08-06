@@ -1,15 +1,15 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
-import MainLayout from "../../layouts/MainLayout";
-import { wrapper } from "../../store";
+import MainLayout from "layouts/MainLayout";
+import { wrapper } from "store";
 import axios from "axios";
 import useSWR from "swr";
-import { FavoritesResponseData } from "../../interfaces/FavoritesResponseData";
-import { fetcher } from "../../axios/server";
+import { FavoritesResponseData } from "interfaces/FavoritesResponseData";
+import { axiosConfig, axiosFetcher } from "axios/server";
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
-    async ({ req }) => {
+    async ({ req, res }) => {
       const token = req.cookies.accessToken;
 
       if (!token) {
@@ -22,12 +22,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
       }
 
       const companiesData = await axios.get(
-        "https://accelerist.herokuapp.com/api/v1/companies?page=1&limit=12",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${process.env.API}/companies?page=1&limit=12`,
+        axiosConfig(token)
       );
       const companies = companiesData.data;
       return {
@@ -45,8 +41,8 @@ interface ISearch {
 const Search: FC<ISearch> = ({ companies }) => {
   const [searchWord, setSearchWord] = useState("");
   const { data: companiesData } = useSWR<FavoritesResponseData>(
-    `https://accelerist.herokuapp.com/api/v1/companies?page=1&limit=12&q=${searchWord}`,
-    fetcher,
+    `/companies?page=1&limit=12&q=${searchWord}`,
+    axiosFetcher,
     { initialData: companies }
   );
 
@@ -97,7 +93,6 @@ const CompanyCard = styled.div`
   border-radius: 6px;
   margin: 12px;
   padding: 26px 32px;
-  //display: flex;
 `;
 
 const SearchInput = styled.input`

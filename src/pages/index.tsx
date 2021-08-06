@@ -1,9 +1,17 @@
-import { NextComponentType } from "next";
-import Head from "next/head";
+import { GetServerSideProps, NextComponentType } from "next";
 import styled from "styled-components";
 import MainLayout from "layouts/MainLayout";
 
 interface IHome {}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    redirect: {
+      destination: "/dashboard",
+      permanent: true,
+    },
+  };
+};
 
 const Home: NextComponentType<IHome> = ({}) => {
   return (
