@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Image from "next/image";
 
 import axios from "axios";
-import { fetcher } from "axios/server";
+import { axiosFetcher } from "axios/server";
 import useSWR from "swr";
 
 import MainLayout from "layouts/MainLayout";
@@ -77,7 +77,7 @@ const Dashboard: FC<IDashboard> = ({ user, favorites, lastLogin }) => {
 
   const { data: favoritesClientData } = useSWR<FavoritesResponseData>(
     "https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6",
-    fetcher,
+    axiosFetcher,
     { initialData: favorites }
   );
 
