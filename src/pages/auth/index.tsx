@@ -33,7 +33,7 @@ const Auth: FC<IAuth> = ({}) => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     await dispatch(loginThunk({ password: data.password, email: data.email }));
-    router.push("/dashboard");
+    router.push("/dashboard", "/dashboard", {});
   };
 
   return (
@@ -78,7 +78,9 @@ const Auth: FC<IAuth> = ({}) => {
                     <UnderFormUnit>
                       <Checkbox type="checkbox" /> <span>Remember</span>
                     </UnderFormUnit>
-                    <Link href={"/"}>Forget Password?</Link>
+                    <Link href={"/"}>
+                      <a>Forget Password?</a>
+                    </Link>
                   </UnderForm>
                 </>
               )}

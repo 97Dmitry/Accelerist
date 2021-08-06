@@ -1,9 +1,8 @@
 import React, { FC, useState } from "react";
 import styled from "styled-components";
-import Image from "next/image";
 
 import axios from "axios";
-import { axiosFetcher } from "axios/server";
+import { axiosConfig, axiosFetcher } from "axios/server";
 import useSWR from "swr";
 
 import MainLayout from "layouts/MainLayout";
@@ -27,29 +26,17 @@ export const getServerSideProps = wrapper.getServerSideProps(
       }
 
       const lastLoginData = await axios.get(
-        "https://accelerist.herokuapp.com/api/v1/team/last_logins",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${process.env.API}/team/last_logins`,
+        axiosConfig(token)
       );
 
       const userData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${process.env.API}/user`,
+        axiosConfig(token)
       );
       const favoritesData = await axios.get(
-        `https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${process.env.API}/companies/favorites?page=1&limit=6`,
+        axiosConfig(token)
       );
 
       const user = await userData.data;
@@ -76,7 +63,7 @@ const Dashboard: FC<IDashboard> = ({ user, favorites, lastLogin }) => {
   const [companiesPage, setCompaniesPage] = useState(1);
 
   const { data: favoritesClientData } = useSWR<FavoritesResponseData>(
-    "https://accelerist.herokuapp.com/api/v1/companies/favorites?page=1&limit=6",
+    "/companies/favorites?page=1&limit=6",
     axiosFetcher,
     { initialData: favorites }
   );

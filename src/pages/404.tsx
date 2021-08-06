@@ -12,7 +12,9 @@ const NotFound: NextComponentType<INotFound> = ({}) => {
           <strong>Please, go HOME, until it&apos;s not too late</strong>
         </p>
         <p>
-          <Link href={"/"}>HOME</Link>
+          <Link href={"/"}>
+            <a>HOME</a>
+          </Link>
         </p>
       </Wrapper>
     </>

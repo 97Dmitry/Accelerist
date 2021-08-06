@@ -62,10 +62,12 @@ const Title = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
-  height: 100px;
+
+  height: 80px;
+  min-height: 80px;
+
   font-weight: 500;
   font-size: 32px;
-  line-height: 150%;
 `;
 
 const Content = styled.main`
